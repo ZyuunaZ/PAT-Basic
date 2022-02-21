@@ -1,0 +1,108 @@
+##### **1003 我要通过**
+
+“**答案正确**”是自动判题系统给出的最令人欢喜的回复。本题属于 PAT 的“**答案正确**”大派送 —— 只要读入的字符串满足下列条件，系统就输出“**答案正确**”，否则输出“**答案错误**”。
+
+得到“**答案正确**”的条件是：
+
+1. 字符串中必须仅有 `P`、 `A`、 `T`这三种字符，不可以包含其它字符；
+2. 任意形如 `xPATx` 的字符串都可以获得“**答案正确**”，其中 `x` 或者是空字符串，或者是仅由字母 `A` 组成的字符串；
+3. 如果 `aPbTc` 是正确的，那么 `aPbATca` 也是正确的，其中 `a`、 `b`、 `c` 均或者是空字符串，或者是仅由字母 `A` 组成的字符串。
+
+现在就请你为 PAT 写一个自动裁判程序，判定哪些字符串是可以获得“**答案正确**”的。
+
+**输入格式：**
+
+每个测试输入包含 1 个测试用例。第 1 行给出一个正整数 *n* (≤10)，是需要检测的字符串个数。接下来每个字符串占一行，字符串长度不超过 100，且不包含空格。
+
+**输出格式：**
+
+每个字符串的检测结果占一行，如果该字符串可以获得“**答案正确**”，则输出 `YES`，否则输出 `NO`。
+
+**输入样例：**
+
+```in
+10
+PAT
+PAAT
+AAPATAA
+AAPAATAAAA
+xPATx
+PT
+Whatever
+APAAATAA
+APT
+APATTAA
+```
+
+**输出样例：**
+
+```out
+YES
+YES
+YES
+YES
+NO
+NO
+NO
+NO
+NO
+NO
+```
+
+
+
+​		**代码展示**
+
+#include<stdio.h>
+#include<string.h>
+int main()
+{	 /*  PAT
+        APATA
+        APAATAA
+        AAAPATAAA
+        AAAPAATAAAAAA
+        即本题的核心是开头A的个数*中间A的个数=后面A的个数
+        */
+    
+    char a[101];
+    int n; //记录第一行的正整数
+    int i;
+    scanf("%d", &n);
+    while(n--){ //这个while(n--)很好，可以节省一些代码
+        scanf("%s", a);//a是数组名，为地址，不用&
+        int len;
+        int np=0, nt=0;//np nt为'P'和'T'的数目
+        len=strlen(a);
+        int lp, lt;
+        int other = 0;
+        for(i=0; i<len; i++){
+            if(a[i]=='P'){
+                np++;
+                lp=i;
+            }
+            else if(a[i]=='T'){
+                nt++;
+                lt=i;
+            }
+            else if(a[i]!='A'){
+                other++;
+            }
+            /* other用于防止出现非PAT的字符出现，np为‘P’的个数，nt为‘T’的个数，lp和lt为标记的位置*/
+        }
+        if(other!=0 || nt!=1 || np!=1 ||lt-lp<=1){
+            printf("NO\n");
+            continue;  //防止PAT以外的字符，PAT只能有一个'P'，一个'T'，P和T之间必须要有A，所以相减必须要大于1
+        }
+        int x, y, z; //P前的A个数，PT之间的A个数，T之后的A个数
+        x=lp;
+        y=lt-lp-1;
+        z=len-lt-1;//i=0开始的，len=3时，PAT，则lt=2，所以len-lt-1才能表示T之后A的个数
+        if(x*y==z){
+            printf("YES\n");
+        }
+        else{
+            printf("NO\n");
+        }
+        
+    }
+}
